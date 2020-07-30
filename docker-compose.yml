@@ -1,94 +1,93 @@
-version: '3.5'
+version: "3.5"
 
 services:
-    browsertrix:
-        image: webrecorder/browsertrix
-        build:
-            context: .
-        environment:
-            - REDIS_URL=redis://redis/0
-            - DEFAULT_POOL=auto-pool
-            - SCREENSHOT_API_URL=http://pywb:8080/api/screenshot/{coll}
-            - EXTRACTED_RAW_DOM_API_URL=http://pywb:8080/api/dom/{coll}
-            - PROXY_HOST=pywb
+  browsertrix:
+    image: webrecorder/browsertrix
+    build:
+      context: .
+    environment:
+      - REDIS_URL=redis://redis/0
+      - DEFAULT_POOL=auto-pool
+      - SCREENSHOT_API_URL=http://pywb:8080/api/screenshot/{coll}
+      - EXTRACTED_RAW_DOM_API_URL=http://pywb:8080/api/dom/{coll}
+      - PROXY_HOST=pywb
 
-        depends_on:
-            - redis
-            - pywb
+    depends_on:
+      - redis
+      - pywb
 
-        ports:
-            - 8000:8000
+    ports:
+      - 8000:8000
 
-        #volumes:
-        #    - ./:/app/
+    #volumes:
+    #    - ./:/app/
 
-    pywb:
-        build: ./pywb/
+  pywb:
+    build: ./pywb/
 
-        environment:
-            - REDIS_URL=redis://redis/0
+    environment:
+      - REDIS_URL=redis://redis/0
 
-        volumes:
-            - ./webarchive:/webarchive
+    volumes:
+      - ./webarchive:/webarchive
 
-        networks:
-            - default
-            - browsers
+    networks:
+      - default
+      - browsers
 
-        ports:
-            - 8180:8080
+    ports:
+      - 8180:8080
 
-        depends_on:
-            - redis
+    depends_on:
+      - redis
 
-    solr:
-        image: solr
+  solr:
+    image: solr
 
-        volumes:
-          - ./solr:/var/solr
+    volumes:
+      - ./solr:/var/solr
 
-        entrypoint:
-          - docker-entrypoint.sh
-          - solr-precreate
-          - browsertrix
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - browsertrix
 
-        ports:
-          - 8983:8983
+    ports:
+      - 8983:8983
 
-    shepherd:
-        image: oldwebtoday/shepherd:1.1.0-dev
+  shepherd:
+    image: oldwebtoday/shepherd:1.1.0-dev
 
-        environment:
-            - BROWSER_NET=browsertrix_browsers
-            - MAIN_NET=browsertrix_default
+    environment:
+      - BROWSER_NET=browsertrix_browsers
+      - MAIN_NET=browsertrix_default
 
-            - PROXY_HOST=pywb
-            - PROXY_PORT=8080
+      - PROXY_HOST=pywb
+      - PROXY_PORT=8080
 
-        depends_on:
-            - redis
+    depends_on:
+      - redis
 
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-            - ./flocks:/app/flocks
-            - ./pool_config.yaml:/app/pool_config.yaml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./flocks:/app/flocks
+      - ./pool_config.yaml:/app/pool_config.yaml
 
-        ports:
-            - 9020:9020
+    ports:
+      - 9020:9020
 
-    redis:
-        image: redis:3.2.4
+  redis:
+    image: redis:3.2.4
 
-    behaviors:
-      image: webrecorder/behaviors
+  behaviors:
+    image: chrisjbaik/behaviors
 
-      ports:
-            - 3030:3030
+    ports:
+      - 3030:3030
 
 networks:
-    default:
-        driver: bridge
+  default:
+    driver: bridge
 
-    browsers:
-        driver: bridge
-
+  browsers:
+    driver: bridge

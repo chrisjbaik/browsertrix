@@ -2,6 +2,7 @@
 
 # Current Browser
 docker pull oldwebtoday/chrome:73
+docker pull oldwebtoday/chrome:76
 
 # Base Browser
 docker pull oldwebtoday/base-browser
