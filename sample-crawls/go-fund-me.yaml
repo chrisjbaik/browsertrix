@@ -1,0 +1,16 @@
+crawls:
+  - name: go-fund-me
+    crawl_type: single-page
+    num_browsers: 1
+
+    coll: go-fund-me-2
+    mode: record
+
+    seed_urls:
+      - https://www.gofundme.com/f/45hb4bjw
+      - https://www.gofundme.com/f/23bwcr8
+
+    behavior_max_time: 300
+    browser: chrome:76
+
+    cache: default
